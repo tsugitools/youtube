@@ -64,10 +64,20 @@ if ( ! $v ) {
 } else {
 ?>
 <div class="container">
+<!--
 <iframe src="//www.youtube.com/embed/<?= urlencode($v) ?>" 
 frameborder="0" allowfullscreen class="video"></iframe>
+-->
+<div id="player" class="video">&nbsp;</div>
 </div>
 <?php
 }
 $OUTPUT->footerStart();
+?>
+<script>
+VIDEO_ID = "<?= urlencode($v) ?>";
+</script>
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script src="video.js?v=<?=rand()?>"></script>
+<?php
 $OUTPUT->footerEnd();
