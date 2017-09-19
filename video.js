@@ -7,26 +7,6 @@ function onPlayerReady(event) {videoPlayer.playerReady(event);}
 
 function onPlayerStateChange(event) {videoPlayer.stateChange(event);}
 
-function timeFormat(seconds) {
-	// Input: Time in seconds
-	// Output: Time in (H:)MM:SS format
-	// Example outputs: 1:44:04, 01:22, 00:01, 141:02:01
-	var formatted = "";
-	var minutes = 0;
-	if(seconds >= 3600) {
-		var hours = Math.floor(seconds/3600);
-		var seconds = seconds - hours*3600;
-		formatted = hours.toString() + ":"
-	}
-	if(seconds >= 60) {
-		minutes = Math.floor(seconds/60);
-		seconds = seconds - minutes*60;
-	}
-	formatted = formatted + ("0" + minutes).substr(-2,2) + ":";
-	formatted = formatted + ("00" + Math.floor(seconds)).substr(-2,2);
-	return formatted;
-}
-
 var videoViews = {
         interval: 1, // Number of seconds per bin
         binCount: 100, // Number of bins
@@ -36,6 +16,7 @@ var videoViews = {
         setUpdateInterval: function() {
                 if(this.updateInterval === null) {
                         this.updateInterval = setInterval(function() {videoViews.updateViews();}, this.interval * 1000);
+                        console.log('Interval seconds: '+this.interval);
                 }
         },
 
@@ -52,12 +33,11 @@ var videoViews = {
                 this.setUpdateInterval(this.interval);
         },
         updateViews: function () {
-
                 var bin = Math.floor(videoPlayer.player.getCurrentTime() / this.interval); // Round down to nearest interval
                 this.bins[bin] += 1;
                 this.counter++;
-                //console.log(this.bins);
-                //console.log("Counter: " + this.counter);
+                // console.log(this.bins);
+                // console.log("Counter: " + this.counter);
                 if(this.counter === 5) {
                         this.sendToDB();
                 }

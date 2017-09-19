@@ -9,8 +9,8 @@ use \Tsugi\Core\LTIX;
 use \Tsugi\Core\Settings;
 use \Tsugi\UI\SettingsForm;
 
-// We don't need much
-$LTI = \Tsugi\Core\LTIX::requireData(array('link_id'));
+// Allow this to just be launched as a naked URL w/o LTI
+$LTI = LTIX::session_start();
 
 // Handle the incoming post first
 if ( SettingsForm::handleSettingsPost() ) {
@@ -49,7 +49,7 @@ $OUTPUT->topNav();
 // https://codepen.io/team/css-tricks/pen/pvamy
 // https://css-tricks.com/seamless-responsive-photo-grid/
 
-if ( $USER->instructor ) {
+if ( $LTI->user && $LTI->user->instructor ) {
 echo "<p style='text-align:right;'>";
 if ( $CFG->launchactivity ) {
     echo('<a href="analytics" class="btn btn-default">Analytics</a> ');
@@ -64,15 +64,23 @@ if ( ! $v ) {
 } else {
 ?>
 <div class="container">
-<!--
+<?php
+if ( $LTI->link ) {
+?>
+<div id="player" class="video">&nbsp;</div>
+<?php
+} else {
+?>
 <iframe src="//www.youtube.com/embed/<?= urlencode($v) ?>" 
 frameborder="0" allowfullscreen class="video"></iframe>
--->
-<div id="player" class="video">&nbsp;</div>
+<?php
+}
+?>
 </div>
 <?php
 }
 $OUTPUT->footerStart();
+if ( $LTI->link ) {
 ?>
 <script>
 VIDEO_ID = "<?= urlencode($v) ?>";
@@ -80,4 +88,5 @@ VIDEO_ID = "<?= urlencode($v) ?>";
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script src="video.js?v=<?=rand()?>"></script>
 <?php
+}
 $OUTPUT->footerEnd();
