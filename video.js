@@ -63,7 +63,6 @@ var videoViews = {
         }
 }
 
-
 var videoPlayer = {
 
 	player: null,
@@ -103,62 +102,8 @@ var videoPlayer = {
 		if(event.data == YT.PlayerState.ENDED) {
 			videoViews.sendToDB();
 		}
-	},
-
-	playTime: function(cut, duration) {
-		console.log(cut);
-		console.log(duration);
-		videoPlayer.player.playVideo();
-		videoPlayer.player.seekTo(cut[0]);
-		setTimeout(
-			function() {videoPlayer.playTimes(cut, duration, 0);},
-			duration[0]*1000
-		);
-	},
-
-	playTimes: function(cut, duration, i) {
-		console.log("Called playTimes");
-		// Don't access this function directly. Use videoPlayer.playTime instead.
-		var offset = cut[i] + duration[i] - videoPlayer.player.getCurrentTime();
-		var waitForEndTime = function(){
-		    clearInterval(waitInterval);
-		    offset = cut[i] + duration[i] - videoPlayer.player.getCurrentTime();
-		    console.log("Offset: " + offset);
-		    if(offset > 10) {
-		    	waitInterval = setInterval(waitForEndTime, offset);
-		    }
-		    else {
-		    	console.log("Finished with offset " + offset);
-		    }
-		}
-		var waitInterval = setInterval(waitForEndTime, offset);
-		/*if(offset > 0) { // Check that player has reached end of interval
-			console.log("Delaying");
-			setTimeout( // Delay until end of interval
-				function() {videoPlayer.playTimes(cut, duration, i);},
-				offset*1000
-			);
-		}
-		else */if(i < cut.length) {
-			// Start next interval
-			console.log("Starting new interval");
-			++i;
-			if(duration[i] === -1) {
-				videoPlayer.player.pauseVideo();
-			}
-			else {
-				videoPlayer.player.seekTo(cut[i]);
-				setTimeout(
-					function() {videoPlayer.playTimes(cut, duration, i);},
-					duration[i]*1000
-				);
-			}
-		}
-		else {
-			console.log("Pausing");
-			videoPlayer.player.pauseVideo();
-		}
 	}
+
 }
 		
 $(document).ready(function() {
