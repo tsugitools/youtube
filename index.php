@@ -5,6 +5,7 @@ require_once "../config.php";
 // http://do1.dr-chuck.com/tsugi/phpdoc/
 
 use \Tsugi\Util\Net;
+use \Tsugi\Util\U;
 use \Tsugi\Core\LTIX;
 use \Tsugi\Core\Settings;
 use \Tsugi\UI\SettingsForm;
@@ -12,8 +13,19 @@ use \Tsugi\UI\SettingsForm;
 // Allow this to just be launched as a naked URL w/o LTI
 $LTI = LTIX::session_start();
 
+$oldv = Settings::linkGet('v', false);
 // Handle the incoming post first
-if ( SettingsForm::handleSettingsPost() ) {
+if ( $LINK->id && SettingsForm::handleSettingsPost() ) {
+    $newv = U::get($_POST,'v',false);
+    if ( $newv && $newv !== $oldv ) {
+        $PDOX->queryDie("DELETE FROM {$p}youtube_views WHERE link_id = :LI",
+            array(':LI' => $LINK->id)
+        );
+        $PDOX->queryDie("DELETE FROM {$p}youtube_views_user WHERE link_id = :LI",
+            array(':LI' => $LINK->id)
+        );
+        $_SESSION['success'] = __('Video ID changed, view tracking analytics reset.');
+    }
     header('Location: '.addSession('index.php') ) ;
     return;
 }
@@ -56,8 +68,9 @@ if ( $CFG->launchactivity ) {
 }
 SettingsForm::button(false);
 SettingsForm::start();
-SettingsForm::text('v','Please enter a YouTube video ID');
+SettingsForm::text('v','Please enter a YouTube video ID.  If you change the video ID, time-based view tracking will be reset.');
 SettingsForm::end();
+$OUTPUT->flashMessages();
 }
 if ( ! $v ) {
     echo("<p>Video has not yet been configured</p>\n");
@@ -84,6 +97,7 @@ if ( $LTI->link ) {
 ?>
 <script>
 VIDEO_ID = "<?= urlencode($v) ?>";
+TRACKING_URL = "<?= addSession('views.php') ?>";
 </script>
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script src="video.js?v=<?=rand()?>"></script>
