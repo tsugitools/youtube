@@ -93,6 +93,12 @@ frameborder="0" allowfullscreen class="video"></iframe>
 </div>
 <?php
 }
+
+// Turn off translate for non-instructors since there is no UI
+if ( ! $USER->instructor ) {
+    $CFG->google_translate = false;
+}
+
 $OUTPUT->footerStart();
 if ( $LTI->link ) {
 ?>
