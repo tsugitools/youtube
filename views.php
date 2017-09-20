@@ -43,6 +43,15 @@ function drawBasic() {
     var graphData = [['% Video Time', 'Views']];
     $.getJSON("<?= addSession('viewdata.php') ?>", function(functionData) {
             console.log(functionData);
+            if ( functionData.error ) {
+                $('#chart_div').text(functionData.error);
+                return;
+            }
+            if ( ! functionData.vector ) {
+                $('#chart_div').text('No data returned');
+                return;
+            }
+
             var vector = functionData.vector;
             console.log(vector);
             var options = {
@@ -52,13 +61,13 @@ function drawBasic() {
                     legend: 'none'
             };
             chart.draw(google.visualization.arrayToDataTable(vector), options);
+            setInterval(drawBasic, 15000);  // Auto refresh
     });
 }
 
 $(document).ready(function() {
     google.charts.load('current', {packages: ['corechart', 'bar']});
     google.charts.setOnLoadCallback(drawBasic);
-    setInterval(drawBasic, 15000);
 });
 </script>
 <?php

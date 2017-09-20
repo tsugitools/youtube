@@ -43,6 +43,8 @@ if ( $rows ) {
         $vector[] = array($i*$row['width'],(int) $row[$key]);
     }
     $retval['vector'] = $vector;
+} else {
+    $retval['error'] = __('No tracking data available');
 }
 
 echo(json_encode($retval, JSON_PRETTY_PRINT));
