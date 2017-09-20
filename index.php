@@ -64,7 +64,8 @@ $OUTPUT->topNav();
 if ( $LTI->user && $LTI->user->instructor ) {
 echo "<p style='text-align:right;'>";
 if ( $CFG->launchactivity ) {
-    echo('<a href="analytics" class="btn btn-default">Analytics</a> ');
+    echo('<a href="analytics" class="btn btn-default">Launches</a> ');
+    echo('<a href="views" class="btn btn-default">Views</a> ');
 }
 SettingsForm::button(false);
 SettingsForm::start();
