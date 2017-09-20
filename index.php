@@ -97,7 +97,7 @@ if ( $LTI->link ) {
 ?>
 <script>
 VIDEO_ID = "<?= urlencode($v) ?>";
-TRACKING_URL = "<?= addSession('views.php') ?>";
+TRACKING_URL = "<?= addSession('tracker.php') ?>";
 </script>
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script src="video.js?v=<?=rand()?>"></script>
