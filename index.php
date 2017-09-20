@@ -65,8 +65,8 @@ if ( $LTI->user && $LTI->user->instructor ) {
 echo "<p style='text-align:right;'>";
 if ( $CFG->launchactivity ) {
     echo('<a href="analytics" class="btn btn-default">Launches</a> ');
-    echo('<a href="views" class="btn btn-default">Views</a> ');
 }
+echo('<a href="views" class="btn btn-default">Views</a> ');
 SettingsForm::button(false);
 SettingsForm::start();
 SettingsForm::text('v','Please enter a YouTube video ID.  If you change the video ID, time-based view tracking will be reset.');
