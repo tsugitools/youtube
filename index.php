@@ -35,6 +35,7 @@ $v = Settings::linkGet('v', false);
 if ( ! $v ) $v = isset($_GET['v']) ? $_GET['v'] : false;
 if ( ! $v ) $v = isset($_SESSION['v']) ? $_SESSION['v'] : false;
 if ( $v ) $_SESSION['v'] = $v;
+$grade = Settings::linkGet('grade', false);
 
 // Render view
 $OUTPUT->header();
@@ -70,6 +71,8 @@ if ( $CFG->launchactivity ) {
 SettingsForm::button(false);
 SettingsForm::start();
 SettingsForm::text('v','Please enter a YouTube video ID.  If you change the video ID, time-based view tracking will be reset.');
+SettingsForm::checkbox('grade','Give the student a 100% grade as soon as they view this video.');
+// SettingsForm::checkbox('watched','Give the student a grade from 0-100% based on the time spent viewing this video.');
 SettingsForm::end();
 $OUTPUT->flashMessages();
 }
@@ -80,6 +83,9 @@ if ( ! $v ) {
 <div class="container">
 <?php
 if ( $LTI->link ) {
+    if ( $grade && $LTI->result && $LTI->result->id && $RESULT->grade < 1.0 ) {
+        $RESULT->gradeSend(1.0, false);
+    }
 ?>
 <div id="player" class="video">&nbsp;</div>
 <?php

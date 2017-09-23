@@ -66,6 +66,9 @@ $values[':link_id'] = $LINK->id;
 $values[':seconds'] = $duration;
 $values[':width'] = $interval;
 
+// Check to see if we are to award grade based on % watched
+$watched = Settings::linkGet('watched', false);
+
 // We don't track instructor views in the overall...
 if ( $USER->instructor ) {
     $sql = "UPDATE {$CFG->dbprefix}youtube_views SET 
