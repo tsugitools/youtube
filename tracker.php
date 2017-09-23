@@ -62,6 +62,11 @@ foreach($vector as $k => $v ) {
     $values[':'.$col] = $v;
     
 }
+
+// If we did not find any suitable data to put in the DB.
+if (count($values) < 1 ) return;
+
+// Prepare for database...
 $values[':link_id'] = $LINK->id;
 $values[':seconds'] = $duration;
 $values[':width'] = $interval;
