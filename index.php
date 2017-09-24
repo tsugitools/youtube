@@ -72,7 +72,7 @@ SettingsForm::button(false);
 SettingsForm::start();
 SettingsForm::text('v','Please enter a YouTube video ID.  If you change the video ID, time-based view tracking will be reset.');
 SettingsForm::checkbox('grade','Give the student a 100% grade as soon as they view this video.');
-// SettingsForm::checkbox('watched','Give the student a grade from 0-100% based on the time spent viewing this video.');
+SettingsForm::checkbox('watched','Give the student a grade from 0-100% based on the time spent viewing this video.');
 SettingsForm::end();
 $OUTPUT->flashMessages();
 }

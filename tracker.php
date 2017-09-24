@@ -7,6 +7,7 @@ require_once "../config.php";
 use \Tsugi\Util\Net;
 use \Tsugi\Util\U;
 use \Tsugi\Core\LTIX;
+use \Tsugi\Core\Settings;
 
 // Allow this to just be launched as a naked URL w/o LTI
 $LTI = LTIX::session_start();
@@ -71,9 +72,6 @@ $values[':link_id'] = $LINK->id;
 $values[':seconds'] = $duration;
 $values[':width'] = $interval;
 
-// Check to see if we are to award grade based on % watched
-$watched = Settings::linkGet('watched', false);
-
 // We don't track instructor views in the overall...
 if ( $USER->instructor ) {
     $sql = "UPDATE {$CFG->dbprefix}youtube_views SET 
@@ -118,3 +116,43 @@ var_dump($values);
 */
 
 $PDOX->queryDie($sql, $values);
+
+// Check to see if we are to award grade based on % watched
+$watched = Settings::linkGet('watched', false);
+if ( ! $watched ) return;
+
+if ( ! $RESULT->id || $RESULT->grade >= 1.0 ) return;
+
+// Only send every 30 seconds
+$last_grade_send = isset($_SESSION['last_grade_send']) ? $_SESSION['last_grade_send'] : 0;
+if ( time() < ($last_grade_send + 30) ) return;
+
+$sql = "SELECT * FROM {$CFG->dbprefix}youtube_views_user
+WHERE link_id = :link_id AND user_id = :user_id LIMIT 1";
+
+$row = $PDOX->rowDie($sql, array(
+        ':link_id' => $LINK->id,
+        ':user_id' => $USER->id
+));
+
+if ( ! $row ) return;
+
+$ticks = 0;
+for($i=0; $i<120;$i++) {
+    $col = 'b'.zpad($i);
+    $ticks = $ticks + $row[$col];
+}
+
+$watched = $ticks * $interval;
+$grade = $watched / ($duration * 0.9);
+echo("ticks=$ticks interval=$interval duration=$duration\n");
+echo("watched=$watched grade=".($grade*100)."\n");
+
+if ( $grade > 1.0 ) $grade = 1.0;
+if ( $RESULT->grade >= $grade ) return;
+
+$RESULT->gradeSend($grade, false);
+
+$_SESSION['last_grade_send'] = time();
+
+
