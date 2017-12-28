@@ -9,7 +9,8 @@ You can track both student launches and vierwing behavior within the video.
 You can assign grades to students for watching the video or based on how much of the video 
 they have watched.
 ",
- "privacy_level" => "anonymous",  // anonymous, name_only, public
+    "messages" => array("launch", "launch_grade"),
+    "privacy_level" => "anonymous",  // anonymous, name_only, public
     "license" => "Apache",
     "languages" => array(
         "English"
