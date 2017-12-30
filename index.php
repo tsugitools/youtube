@@ -6,6 +6,7 @@ require_once "../config.php";
 
 use \Tsugi\Util\Net;
 use \Tsugi\Util\U;
+use \Tsugi\Util\PS;
 use \Tsugi\Core\LTIX;
 use \Tsugi\Core\Settings;
 use \Tsugi\UI\SettingsForm;
@@ -15,8 +16,14 @@ $LTI = LTIX::session_start();
 
 $oldv = Settings::linkGet('v', false);
 // Handle the incoming post first
+$newv = U::get($_POST,'v',false);
+if ( $newv && PS::s($newv)->startsWith('http://') || PS::s($newv)->startsWith('https://') ) {
+    $_SESSION['error'] = __('Please enter a YouTube ID, not a YouTube URL');
+    header('Location: '.addSession('index') ) ;
+    return;
+}
+
 if ( $LINK->id && SettingsForm::handleSettingsPost() ) {
-    $newv = U::get($_POST,'v',false);
     if ( $newv && $newv !== $oldv ) {
         $PDOX->queryDie("DELETE FROM {$p}youtube_views WHERE link_id = :LI",
             array(':LI' => $LINK->id)
@@ -26,7 +33,7 @@ if ( $LINK->id && SettingsForm::handleSettingsPost() ) {
         );
         $_SESSION['success'] = __('Video ID changed, view tracking analytics reset.');
     }
-    header('Location: '.addSession('index.php') ) ;
+    header('Location: '.addSession('index') ) ;
     return;
 }
 
