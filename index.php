@@ -23,7 +23,7 @@ if ( $newv && PS::s($newv)->startsWith('http://') || PS::s($newv)->startsWith('h
     return;
 }
 
-if ( $LINK->id && SettingsForm::handleSettingsPost() ) {
+if ( isset($LINK->id) && SettingsForm::handleSettingsPost() ) {
     if ( $newv && $newv !== $oldv ) {
         $PDOX->queryDie("DELETE FROM {$p}youtube_views WHERE link_id = :LI",
             array(':LI' => $LINK->id)
@@ -108,7 +108,7 @@ frameborder="0" allowfullscreen class="video"></iframe>
 }
 
 // Turn off translate for non-instructors since there is no UI
-if ( ! $USER->instructor ) {
+if ( ! isser($USER) || ! $USER->instructor ) {
     $CFG->google_translate = false;
 }
 
