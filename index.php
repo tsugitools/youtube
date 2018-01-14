@@ -108,7 +108,7 @@ frameborder="0" allowfullscreen class="video"></iframe>
 }
 
 // Turn off translate for non-instructors since there is no UI
-if ( ! isser($USER) || ! $USER->instructor ) {
+if ( ! isset($USER) || ! $USER->instructor ) {
     $CFG->google_translate = false;
 }
 
