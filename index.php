@@ -25,10 +25,10 @@ if ( $newv && PS::s($newv)->startsWith('http://') || PS::s($newv)->startsWith('h
 
 if ( isset($LINK->id) && SettingsForm::handleSettingsPost() ) {
     if ( $newv && $newv !== $oldv ) {
-        $PDOX->queryDie("DELETE FROM {$p}youtube_views WHERE link_id = :LI",
+        $PDOX->queryDie("DELETE FROM {$CFG->dbprefix}youtube_views WHERE link_id = :LI",
             array(':LI' => $LINK->id)
         );
-        $PDOX->queryDie("DELETE FROM {$p}youtube_views_user WHERE link_id = :LI",
+        $PDOX->queryDie("DELETE FROM {$CFG->dbprefix}youtube_views_user WHERE link_id = :LI",
             array(':LI' => $LINK->id)
         );
         $_SESSION['success'] = __('Video ID changed, view tracking analytics reset.');
