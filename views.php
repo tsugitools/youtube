@@ -11,7 +11,7 @@ use \Tsugi\Core\Settings;
 use \Tsugi\UI\SettingsForm;
 
 // Allow this to just be launched as a naked URL w/o LTI
-$LTI = LTIX::session_start();
+$LTI = LTIX::requireData();
 
 if ( ! $USER->id || ! $LINK->id || ! $USER->instructor ) {
     Net::send403();
