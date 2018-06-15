@@ -50,8 +50,8 @@ var videoViews = {
                 if ( bin > this.binCount ) return;
                 this.bins[bin] += 1;
                 this.counter++;
-                // TODO: Fix to make this less chatty once we know it works
-                if(true || delta > 30 || ( delta > 10 && this.counter > 10) ) {
+                if(delta > 30 || ( delta > 10 && this.counter > 10) ) {
+                        console.log('Send to DB');
                         this.sendToDB();
                 }
         },

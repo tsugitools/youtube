@@ -12,9 +12,9 @@ use \Tsugi\Core\Settings;
 // Allow this to just be launched as a naked URL w/o LTI
 $LTI = LTIX::session_start();
 
-if ( ! $USER->id || ! $LINK->id ) {
-    Net::send403();
-    die_with_error_log('Must be logged in to track analytics');
+// No tracking if they are not logged in
+if ( ! isset($USER->id) || ! isset($LINK->id) ) {
+    return;
 }
 
 $duration = (int) U::get($_POST, 'duration', false);

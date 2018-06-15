@@ -68,7 +68,7 @@ $OUTPUT->topNav();
 // https://codepen.io/team/css-tricks/pen/pvamy
 // https://css-tricks.com/seamless-responsive-photo-grid/
 
-if ( $LTI->user && $LTI->user->instructor ) {
+if ( isset($LTI->user) && $LTI->user->instructor ) {
 echo "<p style='text-align:right;'>";
 if ( $CFG->launchactivity ) {
     echo('<a href="analytics" class="btn btn-default">Launches</a> ');
@@ -84,17 +84,19 @@ $OUTPUT->flashMessages();
 }
 if ( ! $v ) {
     echo("<p>Video has not yet been configured</p>\n");
-} else {
+    $OUTPUT->footer();
+    return;
+}
 ?>
 <div class="container">
 <?php
-if ( $LTI->link ) {
+if ( isset($LTI->link) && $LTI->link ) {
     if ( $grade && $LTI->result && $LTI->result->id && $RESULT->grade < 1.0 ) {
         $RESULT->gradeSend(1.0, false);
     }
-?>
-<div id="player" class="video">&nbsp;</div>
-<?php
+}
+if ( isset($USER->id) && isset($LINK->id) ) {
+    echo('<div id="player" class="video">&nbsp;</div>');
 } else {
 ?>
 <iframe src="//www.youtube.com/embed/<?= urlencode($v) ?>" 
@@ -104,7 +106,6 @@ frameborder="0" allowfullscreen class="video"></iframe>
 ?>
 </div>
 <?php
-}
 
 // Turn off translate for non-instructors since there is no UI
 if ( ! isset($USER) || ! $USER->instructor ) {
@@ -112,7 +113,7 @@ if ( ! isset($USER) || ! $USER->instructor ) {
 }
 
 $OUTPUT->footerStart();
-if ( $LTI->link ) {
+if ( isset($USER->id) && isset($LINK->id) ) {
 ?>
 <script>
 VIDEO_ID = "<?= urlencode($v) ?>";
