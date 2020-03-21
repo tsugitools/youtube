@@ -18,17 +18,17 @@ if ( ! $USER->id || ! $LINK->id || ! $USER->instructor ) {
     return;
 }
 
+$menu = new \Tsugi\UI\MenuSet();
+$menu->addLeft(__('Back'), 'index.php');
+
 // Render view
 $OUTPUT->header();
 $OUTPUT->bodyStart();
-$OUTPUT->topNav();
+$OUTPUT->topNav($menu);
 // https://codepen.io/team/css-tricks/pen/pvamy
 // https://css-tricks.com/seamless-responsive-photo-grid/
 
 ?>
-<p>
-<a href="index" class="btn btn-default">Back</a>
-</p>
 <div id="chartWrapper"><div id="chart_div" style="width: 90%; height: 400px;">Loading View Stats</div></div>
 
 <?php
