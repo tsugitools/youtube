@@ -43,6 +43,16 @@ if ( ! $v ) $v = isset($_SESSION['v']) ? $_SESSION['v'] : false;
 if ( $v ) $_SESSION['v'] = $v;
 $grade = Settings::linkGet('grade', false);
 
+$menu = false;
+if ( $LTI->link && $LTI->user && $LTI->user->instructor ) {
+    $menu = new \Tsugi\UI\MenuSet();
+    $menu->addRight(__('Views'), 'views');
+    if ( $CFG->launchactivity ) {
+        $menu->addRight(__('Launches'), 'analytics');
+    }
+    $menu->addRight(__('Settings'), '#', /* push */ false, SettingsForm::attr());
+}
+
 // Render view
 $OUTPUT->header();
 // https://www.h3xed.com/web-development/how-to-make-a-responsive-100-width-youtube-iframe-embed
@@ -64,24 +74,20 @@ $OUTPUT->header();
 </style>
 <?php
 $OUTPUT->bodyStart();
-$OUTPUT->topNav();
+$OUTPUT->topNav($menu);
+
+$OUTPUT->flashMessages();
 // https://codepen.io/team/css-tricks/pen/pvamy
 // https://css-tricks.com/seamless-responsive-photo-grid/
 
 if ( isset($LTI->user) && $LTI->user->instructor ) {
-echo "<p style='text-align:right;'>";
-if ( $CFG->launchactivity ) {
-    echo('<a href="analytics" class="btn btn-default">Launches</a> ');
+    SettingsForm::start();
+    SettingsForm::text('v','Please enter a YouTube video ID.  If you change the video ID, time-based view tracking will be reset.');
+    SettingsForm::checkbox('grade','Give the student a 100% grade as soon as they view this video.');
+    SettingsForm::checkbox('watched','Give the student a grade from 0-100% based on the time spent viewing this video.');
+    SettingsForm::end();
 }
-echo('<a href="views" class="btn btn-default">Views</a> ');
-SettingsForm::button(false);
-SettingsForm::start();
-SettingsForm::text('v','Please enter a YouTube video ID.  If you change the video ID, time-based view tracking will be reset.');
-SettingsForm::checkbox('grade','Give the student a 100% grade as soon as they view this video.');
-SettingsForm::checkbox('watched','Give the student a grade from 0-100% based on the time spent viewing this video.');
-SettingsForm::end();
-$OUTPUT->flashMessages();
-}
+
 if ( ! $v ) {
     echo("<p>Video has not yet been configured</p>\n");
     $OUTPUT->footer();
