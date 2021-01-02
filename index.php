@@ -106,7 +106,9 @@ if ( isset($USER->id) && isset($LINK->id) ) {
 } else {
 ?>
 <iframe src="//www.youtube.com/embed/<?= urlencode($v) ?>" 
-frameborder="0" allowfullscreen class="video"></iframe>
+frameborder="0" class="video"
+allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen
+></iframe>
 <?php
 }
 ?>
