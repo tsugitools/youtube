@@ -5,7 +5,7 @@ $REGISTER_LTI2 = array(
 "FontAwesome" => "fa-youtube",
 "short_name" => "YouTube",
 "description" => "This tool allows you to track as students access and watch a YouTube video.
-You can track both student launches and vierwing behavior within the video.
+You can track both student launches and viewing behavior within the video.
 You can assign grades to students for watching the video or based on how much of the video 
 they have watched.
 ",

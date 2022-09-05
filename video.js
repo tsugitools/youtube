@@ -73,13 +73,21 @@ var videoViews = {
         }
 }
 
+// https://developers.google.com/youtube/player_parameters
+// https://stackoverflow.com/questions/63792338/disable-cookies-when-using-the-youtube-iframe-player-api-script-with-the-youtube
 var videoPlayer = {
 
     player: null,
     createPlayer: function() {
         this.player = new YT.Player('player', {
+            host: 'https://www.youtube-nocookie.com',
             videoId: VIDEO_ID, // Defined in HTML
-            playerVars: {rel:0},
+            playerVars: {
+              'rel' : 0,
+			  'enablejsapi' : 1,
+			  'origin' : 'https://dj4e.com',
+              'playsinline': 1
+            },
             events: {
                 'onReady': onPlayerReady,
                 'onStateChange': onPlayerStateChange
