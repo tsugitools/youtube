@@ -55,7 +55,7 @@ var videoViews = {
                 if ( bin > this.binCount ) return;
                 this.bins[bin] += 1;
                 this.counter++;
-                if(delta > 30 || ( delta > 10 && this.counter > 10) ) {
+                if(delta > 10 || ( delta > 5 && this.counter > 10) ) {
                         this.sendToDB();
                 }
         },

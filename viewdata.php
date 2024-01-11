@@ -16,16 +16,20 @@ if ( ! $USER->id || ! $LINK->id ) {
     die_with_error_log('Must be logged in to track analytics');
 }
 
+$user_id = U::get($_GET, 'user_id', 0);
+
 function zpad($i) {
     return str_pad($i."", 3, "0", STR_PAD_LEFT);
 }
 
-$sql = "SELECT * FROM {$CFG->dbprefix}youtube_views 
-WHERE link_id = :link_id LIMIT 1";
-
-$rows = $PDOX->allRowsDie($sql, array(
-        ':link_id' => $LINK->id
-));
+if ( $user_id == 0 ) {
+    $sql = "SELECT * FROM {$CFG->dbprefix}youtube_views WHERE link_id = :link_id LIMIT 1";
+    $rows = $PDOX->allRowsDie($sql, array( ':link_id' => $LINK->id));
+} else {
+    $sql = "SELECT * FROM {$CFG->dbprefix}youtube_views_user 
+        WHERE link_id = :link_id AND user_id = :user_id LIMIT 1";
+    $rows = $PDOX->allRowsDie($sql, array( ':link_id' => $LINK->id, ':user_id' => $user_id));
+}
 
 $retval = array();
 if ( $rows ) {
