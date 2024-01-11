@@ -24,7 +24,8 @@ if ( $USER->instructor ) {
     $sql = "SELECT V.user_id AS user_id, displayname, email
         FROM {$CFG->dbprefix}youtube_views_user AS V
         JOIN {$CFG->dbprefix}lti_user AS U ON V.user_id = U.user_id
-        WHERE link_id = :link_id";
+        WHERE link_id = :link_id
+        ORDER BY displayname, email";
 
     $rows = $PDOX->allRowsDie($sql, array(
         ':link_id' => $LINK->id
