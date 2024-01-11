@@ -7,6 +7,8 @@ function onPlayerReady(event) {videoPlayer.playerReady(event);}
 
 function onPlayerStateChange(event) {videoPlayer.stateChange(event);}
 
+function onPlaybackRateChange(event) {videoPlayer.onPlaybackRateChange(event);}
+
 var videoViews = {
         interval: 1, // Number of seconds per bin
         binCount: 120, // Number of bins
@@ -17,7 +19,9 @@ var videoViews = {
 
         setUpdateInterval: function() {
                 if(this.updateInterval === null) {
-                        this.updateInterval = setInterval(function() {videoViews.updateViews();}, this.interval * 1000);
+                        const rate = videoPlayer.player.getPlaybackRate();
+                        console.log('Starting interval rate=', rate);
+                        this.updateInterval = setInterval(function() {videoViews.updateViews();}, this.interval * (1000 / videoPlayer.player.getPlaybackRate()));
                 }
         },
 
@@ -43,6 +47,7 @@ var videoViews = {
         },
 
         updateViews: function () {
+                console.debug('updateViews');
                 var bin = Math.floor(videoPlayer.player.getCurrentTime() / this.interval); // Round down to nearest interval
                 var now = (new Date().getTime())/ 1000;
                 var delta = now - this.updated_at;
@@ -51,21 +56,23 @@ var videoViews = {
                 this.bins[bin] += 1;
                 this.counter++;
                 if(delta > 30 || ( delta > 10 && this.counter > 10) ) {
-                        console.log('Send to DB');
                         this.sendToDB();
                 }
         },
         sendToDB: function() {
+                console.log('Send to DB');
                 this.counter = 0;
                 this.updated_at = (new Date().getTime())/ 1000;
                 var message = {
+                        state: videoPlayerState,
+                        rate: videoPlayer.player.getPlaybackRate(),
                         duration: this.getDuration(),
                         interval: this.interval,
                         vector: this.bins
                 };
                 console.log(JSON.stringify(message));
                 $.post(TRACKING_URL, message, function(data) {
-                        //console.log(data);
+                        console.debug(data);
                 });
                 // Reset the bins - don't wait.
                 var i = this.bins.length - 1;
@@ -75,6 +82,7 @@ var videoViews = {
 
 // https://developers.google.com/youtube/player_parameters
 // https://stackoverflow.com/questions/63792338/disable-cookies-when-using-the-youtube-iframe-player-api-script-with-the-youtube
+var videoPlayerState = 'init';
 var videoPlayer = {
 
     player: null,
@@ -90,7 +98,8 @@ var videoPlayer = {
             },
             events: {
                 'onReady': onPlayerReady,
-                'onStateChange': onPlayerStateChange
+                'onStateChange': onPlayerStateChange,
+                'onPlaybackRateChange': onPlaybackRateChange
             }
         });
     },
@@ -109,15 +118,29 @@ var videoPlayer = {
         firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
     },
 
+    onPlaybackRateChange: function(event) {
+        console.log("Rate change", event);
+        if ( videoPlayerState == 'playing' ) {
+            videoViews.sendToDB();
+            videoViews.unsetUpdateInterval();
+            videoViews.setUpdateInterval();
+        }
+    },
+
     stateChange: function(event) {
         if (event.data == YT.PlayerState.PLAYING) {
+            videoPlayerState = 'playing';
+            console.log('Player playing');
             videoViews.setUpdateInterval();
-
         }
-        else { // Not playing
+        else if (event.data == YT.PlayerState.PAUSED) {
+            videoPlayerState = 'paused';
+            console.log('Player paused');
             videoViews.unsetUpdateInterval();
-        }
-        if(event.data == YT.PlayerState.ENDED) {
+            videoViews.sendToDB();
+        } else if (event.data == YT.PlayerState.ENDED) {
+            videoPlayerState = 'finished';
+            console.log('Player finished');
             videoViews.sendToDB();
         }
     }

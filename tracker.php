@@ -17,6 +17,7 @@ if ( ! isset($USER->id) || ! isset($LINK->id) ) {
     return;
 }
 
+$state = (int) U::get($_POST, 'state', 'unknown');
 $duration = (int) U::get($_POST, 'duration', false);
 $interval = (int) U::get($_POST, 'interval', false);
 $vector = U::get($_POST, 'vector', false);
@@ -64,8 +65,13 @@ foreach($vector as $k => $v ) {
     
 }
 
+header("Content-Type: text/plain");
+
 // If we did not find any suitable data to put in the DB.
-if (count($values) < 1 ) return;
+if (count($values) < 1 ) {
+    echo("no new data...\n");
+    return;
+}
 
 // Prepare for database...
 $values[':link_id'] = $LINK->id;
@@ -91,7 +97,7 @@ if ( $USER->instructor ) {
     ON DUPLICATE KEY UPDATE updated_at = NOW(), \n"
     . $update_sql;
 
-    echo($sql); echo("\n"); var_dump($values);
+    echo($sql); echo("\n"); var_dump($values);echo("\n");
 
     $PDOX->queryDie($sql, $values);
 }
@@ -125,7 +131,10 @@ if ( ! $RESULT->id || $RESULT->grade >= 1.0 ) return;
 
 // Only send every 30 seconds
 $last_grade_send = isset($_SESSION['last_grade_send']) ? $_SESSION['last_grade_send'] : 0;
-if ( time() < ($last_grade_send + 30) ) return;
+if ( $state == 'playing' && time() < ($last_grade_send + 30) ) {
+    echo("Grade not sent last=$last_grade_send time=".time()."\n");
+    return;
+}
 
 $sql = "SELECT * FROM {$CFG->dbprefix}youtube_views_user
 WHERE link_id = :link_id AND user_id = :user_id LIMIT 1";
@@ -152,6 +161,7 @@ if ( $grade > 1.0 ) $grade = 1.0;
 if ( $RESULT->grade >= $grade ) return;
 
 $RESULT->gradeSend($grade, false);
+echo("Grade sent $grade\n");
 
 $_SESSION['last_grade_send'] = time();
 
