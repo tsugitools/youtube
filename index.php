@@ -42,6 +42,7 @@ if ( ! $v ) $v = isset($_GET['v']) ? $_GET['v'] : false;
 if ( ! $v ) $v = isset($_SESSION['v']) ? $_SESSION['v'] : false;
 if ( $v ) $_SESSION['v'] = $v;
 $grade = Settings::linkGet('grade', false);
+$watched = Settings::linkGet('watched', false);
 
 $menu = false;
 if ( $LTI->link && $LTI->user && $LTI->user->instructor ) {
@@ -131,4 +132,12 @@ TRACKING_URL = "<?= addSession('tracker.php') ?>";
 <script src="video.js?v=<?=rand()?>"></script>
 <?php
 }
+if ( $watched ) {
+?>
+    <script>
+    alert('Your viewing of this video is being tracked and graded based on watching the video to the end.  To get your grade, make sure to watch this video in this window.  If you open this video in a new window, your grade will not reflect the time you watch the video outside this window.');
+    </script>
+<?php
+}
+
 $OUTPUT->footerEnd();
