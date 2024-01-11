@@ -135,7 +135,7 @@ TRACKING_URL = "<?= addSession('tracker.php') ?>";
 if ( $watched ) {
 ?>
     <script>
-    alert('Your viewing of this video is being tracked and graded based on watching the video to the end.  To get your grade, make sure to watch this video in this window.  If you open this video in a new window, your grade will not reflect the time you watch the video outside this window.');
+    alert('Your viewing of this video is being tracked and your grade is computed based on how much of the video you watch.  Make sure to watch the entire video in this window.  If you open video in a new window or new tab, your grade will not reflect the time you watched the video outside this window.');
     </script>
 <?php
 }
