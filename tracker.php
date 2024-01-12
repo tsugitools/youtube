@@ -14,6 +14,7 @@ $LTI = LTIX::session_start();
 
 // No tracking if they are not logged in
 if ( ! isset($USER->id) || ! isset($LINK->id) ) {
+    Net::send403('Not logged in');
     return;
 }
 

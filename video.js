@@ -43,7 +43,8 @@ var videoViews = {
                 // Zero filled array of size binCount
                 this.bins = Array.apply(null, new Array(this.binCount)).map(Number.prototype.valueOf,0);
                 this.updated_at = (new Date().getTime())/ 1000;
-                this.setUpdateInterval(this.interval);
+                // Wait until playing has started
+                // this.setUpdateInterval(this.interval);
         },
 
         updateViews: function () {
@@ -73,7 +74,15 @@ var videoViews = {
                 console.log(JSON.stringify(message));
                 $.post(TRACKING_URL, message, function(data) {
                         console.debug(data);
+                }).fail(function (parm) {
+                    console.log(parm);
+                    if ( parm.status == 403 ) {
+                        alert('It appears that you have been logged out so tracking cannot store data on the server, you may need to relaunch this page.');
+                    } else {
+                        alert('Tracking cannot store data on the server('+parm.status+': '+parm.statusText+'), you may need to relaunch this page.');
+                    }
                 });
+
                 // Reset the bins - don't wait.
                 var i = this.bins.length - 1;
                 while(i >= 0) this.bins[i--] = 0;
@@ -107,7 +116,8 @@ var videoPlayer = {
     playerReady: function(event) {
         this.player.playVideo();
         videoViews.initialize();
-        videoViews.setUpdateInterval();
+        // Wait until playing
+        // videoViews.setUpdateInterval();
     },
 
     loadAPI: function() {
