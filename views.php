@@ -14,12 +14,22 @@ use \Tsugi\UI\SettingsForm;
 // Allow this to just be launched as a naked URL w/o LTI
 $LTI = LTIX::requireData();
 
-if ( ! $USER->id || ! $LINK->id || ! $USER->instructor ) {
+$user_id = U::get($_GET, 'user_id', 0);
+if ( ! $USER->id || ! $LINK->id ) {
     Net::send403();
     return;
 }
 
-$user_id = U::get($_GET, 'user_id', 0);
+if ( $USER->instructor ) {
+    // OK
+} else if ( $USER->id == $user_id && $user_id > 0 ) {
+    // OK
+} else {
+    Net::send403();
+    return;
+}
+
+$rows = array();
 if ( $USER->instructor ) {
     $sql = "SELECT V.user_id AS user_id, displayname, email
         FROM {$CFG->dbprefix}youtube_views_user AS V

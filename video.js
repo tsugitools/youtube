@@ -152,6 +152,7 @@ var videoPlayer = {
             videoPlayerState = 'finished';
             console.log('Player finished');
             videoViews.sendToDB();
+            videoViews.unsetUpdateInterval();
         }
     }
 

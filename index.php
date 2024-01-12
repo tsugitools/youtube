@@ -89,6 +89,10 @@ if ( isset($LTI->user) && $LTI->user->instructor ) {
     SettingsForm::end();
 }
 
+if ( isset($USER->id) && isset($LINK->id) && ! $USER->instructor) {
+    echo('<p style="float:right;"><a href="views.php?user_id='.$USER->id.'">Check my viewing activity</a></p><br clear="all">'."\n");
+}
+
 if ( ! $v ) {
     echo("<p>Video has not yet been configured</p>\n");
     $OUTPUT->footer();
