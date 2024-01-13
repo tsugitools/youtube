@@ -45,13 +45,18 @@ $grade = Settings::linkGet('grade', false);
 $watched = Settings::linkGet('watched', false);
 
 $menu = false;
-if ( $LTI->link && $LTI->user && $LTI->user->instructor ) {
+if ( $LTI->link && $LTI->user ) {
     $menu = new \Tsugi\UI\MenuSet();
-    $menu->addRight(__('Views'), 'views');
-    if ( $CFG->launchactivity ) {
-        $menu->addRight(__('Launches'), 'analytics');
+    if ( $LTI->user->instructor ) {
+        $menu->addRight(__('Views'), 'views');
+        if ( $CFG->launchactivity ) {
+            $menu->addRight(__('Launches'), 'analytics');
+        }
+        $menu->addRight(__('Settings'), '#', /* push */ false, SettingsForm::attr());
+    } else if ( $watched ) {
+        $menu->addRight(__('Your Viewing Data'), 'views?user_id='.$USER->id);
     }
-    $menu->addRight(__('Settings'), '#', /* push */ false, SettingsForm::attr());
+
 }
 
 // Render view
@@ -87,10 +92,6 @@ if ( isset($LTI->user) && $LTI->user->instructor ) {
     SettingsForm::checkbox('grade','Give the student a 100% grade as soon as they view this video.');
     SettingsForm::checkbox('watched','Give the student a grade from 0-100% based on the time spent viewing this video.');
     SettingsForm::end();
-}
-
-if ( isset($USER->id) && isset($LINK->id) && ! $USER->instructor) {
-    echo('<p style="float:right;"><a href="views.php?user_id='.$USER->id.'">Check my viewing activity</a></p><br clear="all">'."\n");
 }
 
 if ( ! $v ) {
