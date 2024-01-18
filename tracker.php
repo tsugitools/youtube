@@ -156,7 +156,7 @@ for($i=0; $i<120;$i++) {
 
 $watched = ($ticks / 120.0);
 $grade = $watched;
-if ( $grade > 0.9) $grade = 1.0;
+if ( $grade > 0.8) $grade = 1.0;
 echo("ticks=$ticks duration=$duration\n");
 echo("watched=$watched grade=".($grade*100)."\n");
 
