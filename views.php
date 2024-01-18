@@ -80,7 +80,7 @@ $OUTPUT->footerStart();
 <script>
 
 function drawBasic() {
-    var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+    var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
     var graphData = [['% Video Time', 'Views']];
     $.getJSON("<?= $data_url ?>", function(functionData) {
             console.log(functionData);
