@@ -22,6 +22,7 @@ $state = (int) U::get($_POST, 'state', 'unknown');
 $duration = (int) U::get($_POST, 'duration', false);
 $interval = (int) U::get($_POST, 'interval', false);
 $vector = U::get($_POST, 'vector', false);
+$rate = U::get($_POST, 'rate', false);
 
 if ( $duration && $interval && is_array($vector) ) {
     // Happy
@@ -150,12 +151,13 @@ if ( ! $row ) return;
 $ticks = 0;
 for($i=0; $i<120;$i++) {
     $col = 'b'.zpad($i);
-    $ticks = $ticks + $row[$col];
+    if ( $row[$col] > 0 ) $ticks++;
 }
 
-$watched = $ticks * $interval;
-$grade = $watched / ($duration * 0.9);
-echo("ticks=$ticks interval=$interval duration=$duration\n");
+$watched = ($ticks / 120.0);
+$grade = $watched;
+if ( $grade > 0.9) $grade = 1.0;
+echo("ticks=$ticks duration=$duration\n");
 echo("watched=$watched grade=".($grade*100)."\n");
 
 if ( $grade > 1.0 ) $grade = 1.0;
