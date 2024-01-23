@@ -23,6 +23,9 @@ Tsugi tool that Clara Nees produced in 2014 as part of an independent study.
 
     https://github.com/cnees/video
 
-Claras tool built interactivity around a YouTube video - this tool just has tracking
-and launching.  Much of this code was inspired by Clara's work.
+Clara's tool built interactivity around a YouTube video using this API:
+
+    https://developers.google.com/youtube/iframe_api_reference
+
+
 
