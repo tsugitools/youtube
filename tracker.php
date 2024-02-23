@@ -127,9 +127,8 @@ $PDOX->queryDie($sql, $values);
 
 // Check to see if we are to award grade based on % watched
 $watched = Settings::linkGet('watched', false);
+echo("watched=$watched id=$RESULT->id previous grade=$RESULT->grade\n");
 if ( ! $watched ) return;
-
-if ( ! $RESULT->id || $RESULT->grade >= 1.0 ) return;
 
 // Only send every 30 seconds
 $last_grade_send = isset($_SESSION['last_grade_send']) ? $_SESSION['last_grade_send'] : 0;
@@ -146,7 +145,10 @@ $row = $PDOX->rowDie($sql, array(
         ':user_id' => $USER->id
 ));
 
-if ( ! $row ) return;
+if ( ! $row ) {
+    echo("Error: could not find user record..\n");
+    return;
+}
 
 $ticks = 0;
 for($i=0; $i<120;$i++) {
@@ -154,11 +156,16 @@ for($i=0; $i<120;$i++) {
     if ( $row[$col] > 0 ) $ticks++;
 }
 
-$watched = ($ticks / 120.0);
+// If the video is < 120 seconds, each bucket is one second
+$maxtics = 120.0;
+if ( $duration < $maxtics ) $maxtics = $duration;
+echo("ticks=$ticks duration=$duration\n");
+
+$watched = ($ticks / $maxtics);
 $grade = $watched;
 if ( $grade > 0.8) $grade = 1.0;
-echo("ticks=$ticks duration=$duration\n");
-echo("watched=$watched grade=".($grade*100)."\n");
+
+echo("watched=$watched old_grade=$RESULT->grade grade=".($grade*100)."\n");
 
 if ( $grade > 1.0 ) $grade = 1.0;
 if ( $RESULT->grade >= $grade ) return;
