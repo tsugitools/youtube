@@ -159,9 +159,9 @@ for($i=0; $i<120;$i++) {
 // If the video is < 120 seconds, each bucket is one second
 $maxtics = 120.0;
 if ( $duration < $maxtics ) $maxtics = $duration;
-echo("ticks=$ticks duration=$duration\n");
+echo("ticks=$ticks interval=$interval duration=$duration\n");
 
-$watched = ($ticks / $maxtics);
+$watched = (($ticks * $interval) / $duration);
 $grade = $watched;
 if ( $grade > 0.8) $grade = 1.0;
 
