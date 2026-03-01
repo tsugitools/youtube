@@ -1,5 +1,7 @@
 <?php
 
+if ( ! isset($CFG) ) exit;
+
 // The SQL to uninstall this tool
 $DATABASE_UNINSTALL = array(
   "drop table if exists {$CFG->dbprefix}youtube_views;",
